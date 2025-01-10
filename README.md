@@ -26,7 +26,9 @@ This action merges a specified pull request.
 
 ## Outputs
 
-N/A
+| Name | Description |
+| :--- | :---------- |
+| auto-merge | Indicates whether the auto-merge setting is enabled for the repository. |
 
 <!-- actdocs end -->
 
