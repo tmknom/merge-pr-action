@@ -1,23 +1,31 @@
-name: Rename me
+name: Merge PR
 description: |
-  Template repository for creating Composite Action with GitHub Actions.
+  This action merges a specified pull request.
 
   ## Usage
 
-  Write usage for your Composite Action.
-
   ```yaml
     steps:
-      - name: Template
-        uses: tmknom/template-composite-action@v0
+      - name: Merge PR
+        uses: tmknom/merge-pr-action@v0
+        with:
+          pull-request: 10
   ```
+
+inputs:
+  pull-request:
+    required: true
+    description: Specifies the pull request to merge as a `number`, `url`, or `branch`.
 
 runs:
   using: composite
 
   steps:
-    - name: Run
-      shell: bash
+    - name: Merge
+      env:
+        PULL_REQUEST: ${{ inputs.pull-request }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
         set -x
-        echo "Write steps"
+        gh pr merge "${PULL_REQUEST}" --merge
+      shell: bash
