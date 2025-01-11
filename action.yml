@@ -33,6 +33,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
+        echo "::group::Describe repository settings"
         set -x
         auto_merge="$(gh api \
           -H "Accept: application/vnd.github+json" \
@@ -40,6 +41,7 @@ runs:
           "/repos/${GITHUB_REPOSITORY}" \
           --jq '.allow_auto_merge')"
         echo "auto-merge=${auto_merge}" >> "${GITHUB_OUTPUT}"
+        echo "::endgroup::"
       shell: bash
 
     - name: Merge
@@ -48,10 +50,12 @@ runs:
         AUTO_MERGE: ${{ steps.repository.outputs.auto-merge }}
         GITHUB_TOKEN: ${{ github.token }}
       run: |
+        echo "::group::Merge"
         set -x
         declare -a flags=(--merge)
         if [[ "${AUTO_MERGE}" == "true" ]]; then
           flags+=(--auto)
         fi
         gh pr merge "${PULL_REQUEST}" "${flags[@]}"
+        echo "::endgroup::"
       shell: bash
