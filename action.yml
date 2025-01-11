@@ -52,7 +52,7 @@ runs:
       run: |
         echo "::group::Merge"
         set -x
-        declare -a flags=(--merge)
+        declare -a flags=(--merge --delete-branch)
         if [[ "${AUTO_MERGE}" == "true" ]]; then
           flags+=(--auto)
         fi
