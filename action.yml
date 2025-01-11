@@ -17,15 +17,39 @@ inputs:
     required: true
     description: Specifies the pull request to merge as a `number`, `url`, or `branch`.
 
+outputs:
+  auto-merge:
+    value: ${{ steps.repository.outputs.auto-merge }}
+    description: Indicates whether the auto-merge setting is enabled for the repository.
+
 runs:
   using: composite
 
   steps:
-    - name: Merge
+    - name: Describe repository settings
+      id: repository
       env:
-        PULL_REQUEST: ${{ inputs.pull-request }}
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         set -x
-        gh pr merge "${PULL_REQUEST}" --merge
+        auto_merge="$(gh api \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "/repos/${GITHUB_REPOSITORY}" \
+          --jq '.allow_auto_merge')"
+        echo "auto-merge=${auto_merge}" >> "${GITHUB_OUTPUT}"
+      shell: bash
+
+    - name: Merge
+      env:
+        PULL_REQUEST: ${{ inputs.pull-request }}
+        AUTO_MERGE: ${{ steps.repository.outputs.auto-merge }}
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        set -x
+        declare -a flags=(--merge)
+        if [[ "${AUTO_MERGE}" == "true" ]]; then
+          flags+=(--auto)
+        fi
+        gh pr merge "${PULL_REQUEST}" "${flags[@]}"
       shell: bash
