@@ -45,7 +45,7 @@ N/A
 
 ## Related projects
 
-N/A
+- [merge-workflows](https://github.com/tmknom/merge-workflows): Collection of merge workflows.
 
 ## Release notes
 
