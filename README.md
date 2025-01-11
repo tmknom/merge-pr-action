@@ -1,26 +1,28 @@
-# template-composite-action
+# merge-pr-action
 
-Template repository for Composite Action.
+Merge a pull request.
 
 <!-- actdocs start -->
 
 ## Description
 
-Template repository for creating Composite Action with GitHub Actions.
+This action merges a specified pull request.
 
 ## Usage
 
-Write usage for your Composite Action.
-
 ```yaml
   steps:
-    - name: Template
-      uses: tmknom/template-composite-action@v0
+    - name: Merge PR
+      uses: tmknom/merge-pr-action@v0
+      with:
+        pull-request: 10
 ```
 
 ## Inputs
 
-N/A
+| Name | Description | Default | Required |
+| :--- | :---------- | :------ | :------: |
+| pull-request | Specifies the pull request to merge as a `number`, `url`, or `branch`. | n/a | yes |
 
 ## Outputs
 
@@ -30,7 +32,10 @@ N/A
 
 ## Permissions
 
-N/A
+| Scope         | Access |
+| :------------ | :----- |
+| contents      | write  |
+| pull-requests | write  |
 
 ## FAQ
 
@@ -44,4 +49,4 @@ N/A
 
 See [GitHub Releases][releases].
 
-[releases]: https://github.com/tmknom/template-composite-action/releases
+[releases]: https://github.com/tmknom/merge-pr-action/releases

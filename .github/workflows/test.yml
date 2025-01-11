@@ -20,29 +20,62 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
     steps:
+      - name: Checkout default branch
+        uses: tmknom/checkout-action@v1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Git Config
+        uses: tmknom/git-config-action@970621c4819d5a601bbac4a2bcf6f5f80d92a2e6 # v0.2.0
+
+      - name: Setup
+        id: setup
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -x
+          base_branch="pseudo-base/${GITHUB_JOB}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          pr_branch="pseudo-pr/${GITHUB_JOB}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          echo "base-branch=${base_branch}" >> "${GITHUB_OUTPUT}"
+          echo "pr-branch=${pr_branch}" >> "${GITHUB_OUTPUT}"
+
+          git switch -c "${base_branch}"
+          git push origin "${base_branch}"
+
+          title="dummy: merge to ${base_branch}"
+          git switch -c "${pr_branch}" "${base_branch}"
+          git commit -m "${title}" --allow-empty
+          git push origin "${pr_branch}"
+          gh pr create --base "${base_branch}" --head "${pr_branch}" --title "${title}" --body ""
+
       - name: Checkout
         uses: tmknom/checkout-action@v1
 
-      - name: Setup
-        run: |
-          set -x
-          echo "Setup"
-
       - name: Exercise
-        id: exercise
         uses: ./
+        with:
+          pull-request: ${{ steps.setup.outputs.pr-branch }}
 
       - name: Verify
         env:
-          OUTCOME: ${{ steps.exercise.outcome }}
+          PR_BRANCH: ${{ steps.setup.outputs.pr-branch }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -x
-          test "${OUTCOME}" = "success"
+          result="$(gh pr view "${PR_BRANCH}" --json state --jq .state)"
+          test "${result}" = "MERGED"
 
       - name: Teardown
         if: ${{ always() }}
+        env:
+          BASE_BRANCH: ${{ steps.setup.outputs.base-branch }}
+          PR_BRANCH: ${{ steps.setup.outputs.pr-branch }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -x
-          echo "Teardown"
+          gh pr close "${PR_BRANCH}" || true
+          git push origin "${PR_BRANCH}" --delete || true
+          git push origin "${BASE_BRANCH}" --delete || true
