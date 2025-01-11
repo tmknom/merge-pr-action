@@ -7,6 +7,8 @@ Merge a pull request.
 ## Description
 
 This action merges a specified pull request.
+If [auto-merge][auto-merge] is enabled for the repository,
+the pull request will be merged automatically once all required reviews are approved and all status checks pass.
 
 ## Usage
 
@@ -51,4 +53,5 @@ N/A
 
 See [GitHub Releases][releases].
 
+[auto-merge]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository
 [releases]: https://github.com/tmknom/merge-pr-action/releases

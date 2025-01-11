@@ -1,6 +1,8 @@
 name: Merge PR
 description: |
   This action merges a specified pull request.
+  If [auto-merge][auto-merge] is enabled for the repository,
+  the pull request will be merged automatically once all required reviews are approved and all status checks pass.
 
   ## Usage
 
