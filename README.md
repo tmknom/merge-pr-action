@@ -43,7 +43,25 @@ the pull request will be merged automatically once all required reviews are appr
 
 ## FAQ
 
-N/A
+### What is auto-merge?
+
+Auto-merge enables a pull request to merge automatically when all requirements are met.
+These requirements include completing the necessary reviews and passing all required status checks.
+With auto-merge, you don’t need to monitor the pull request manually, allowing you to focus on other tasks.
+
+To use auto-merge, it must first be enabled for the repository.
+Once enabled, users with write permissions can configure specific pull requests to merge automatically when all requirements are satisfied.
+
+For more information, see:
+
+- [Managing auto-merge for pull requests in your repository][releases]
+
+### Can this action approve a pull request?
+
+No.
+
+This action does not approve pull requests.
+If branch protection rules require approval, you must ensure the pull request is approved before using this action.
 
 ## Related projects
 
